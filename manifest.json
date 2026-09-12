@@ -1,0 +1,17 @@
+{
+  "name": "Hafıza Sarayı Kursu",
+  "short_name": "Saray",
+  "description": "Hafıza sarayı yöntemini adım adım öğreten 12 derslik kurs",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12121a",
+  "theme_color": "#12121a",
+  "lang": "tr",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
