@@ -1,4 +1,5 @@
 // Çevrimdışı çalışma: uygulama kabuğunu önbelleğe al, ağ varsa tazele.
+const ON_EK = 'hafiza-sarayi-';
 const AD = 'hafiza-sarayi-v2';
 const DOSYALAR = [
   './', './index.html', './styles.css',
@@ -11,11 +12,12 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys()
-      .then((adlar) => Promise.all(adlar.filter((a) => a !== AD).map((a) => caches.delete(a))))
-      .then(() => self.clients.claim())
-  );
+  // Aynı origin altında başka uygulamalar da olabilir (…github.io/<depo>/).
+  // Bu yüzden yalnızca BU uygulamanın ön ekini taşıyan eski sürümler silinir.
+  e.waitUntil(caches.keys()
+    .then((adlar) => Promise.all(
+      adlar.filter((a) => a.startsWith(ON_EK) && a !== AD).map((a) => caches.delete(a))))
+    .then(() => self.clients.claim()));
 });
 
 self.addEventListener('fetch', (e) => {
@@ -27,6 +29,7 @@ self.addEventListener('fetch', (e) => {
         caches.open(AD).then((c) => c.put(e.request, kopya)).catch(() => {});
         return yanit;
       })
-      .catch(() => caches.match(e.request).then((v) => v || caches.match('./index.html')))
+      .catch(() => caches.open(AD).then((c) =>
+        c.match(e.request).then((v) => v || c.match('./index.html'))))
   );
 });

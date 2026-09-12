@@ -38,8 +38,8 @@ function gorKurs() {
       </div>
       <div class="ilerleme"><i style="width:${gi.yuzde}%"></i></div>
       ${onT ? `<p class="soluk">Ön test: <strong>${onT.dogru}/${onT.toplam}</strong> terim${
-        sonT ? ` → Son test: <strong style="color:var(--yesil)">${sonT.dogru}/${sonT.toplam}</strong>
-        (${sonT.dogru - onT.dogru >= 0 ? '+' : ''}${sonT.dogru - onT.dogru})` : ' · son test 12. derste'}</p>` : ''}
+        sonT ? ` → Son test: <strong>${sonT.dogru}/${sonT.toplam}</strong>
+        (fark ${sonT.dogru - onT.dogru >= 0 ? '+' : ''}${sonT.dogru - onT.dogru})` : ' · son test 12. derste'}</p>` : ''}
     </div>
 
     ${siradaki ? `<button class="birincil tam" data-eylem="ders-ac" data-id="${siradaki.id}">
@@ -369,8 +369,9 @@ function gorDrill() {
         ? `✓ Geçtin (gereken %${drill.gecmeNotu})`
         : `Geçme notu %${drill.gecmeNotu}. Rotayı biraz daha yürü ve tekrar dene.`}</p>` : ''}
       ${onT ? `<p style="text-align:center">Ön testte <strong>${onT.dogru}</strong> → şimdi
-        <strong style="color:var(--yesil)">${r.dogru}</strong>
-        (${r.dogru - onT.dogru >= 0 ? '+' : ''}${r.dogru - onT.dogru} terim)</p>` : ''}
+        <strong>${r.dogru}</strong> (fark ${r.dogru - onT.dogru >= 0 ? '+' : ''}${r.dogru - onT.dogru} terim)</p>
+        <p class="soluk" style="text-align:center">İki listenin güçlüğü eşitlenmiş değil; bu fark
+        kendi kaydın, kursun etkisinin ölçümü değil.</p>` : ''}
     </div>
 
     <h2>Döküm</h2>
@@ -547,9 +548,11 @@ function provaBaslat(mod, sarayId) {
 
   prova = {
     mod, kuyruk: liste.map((x) => ({ s: x.saray.id, d: x.durak.id, i: x.imge.id })),
-    toplam: liste.length, bitti: 0, acik: false,
+    toplam: liste.length, bitti: 0, acik: false, tamamlandi: false,
   };
-  git('/prova');
+  // Zaten /prova üzerindeysek hash değişmediği için hashchange tetiklenmez; elle çiz.
+  if ((rota().parca[0] || '') === 'prova') ciz();
+  else git('/prova');
 }
 
 function gorProva() {
@@ -579,11 +582,11 @@ function gorProva() {
       }).join('')}`;
   }
 
-  if (!prova.kuyruk.length) {
-    const b = prova.bitti;
-    prova = null;
+  // Bitiş ekranı: durumu burada TEMİZLEMİYORUZ. Çizim fonksiyonunun yan etkisi olursa,
+  // notVer içinde store aboneliğinin tetiklediği ara çizim prova nesnesini düşürüyor.
+  if (prova.tamamlandi || !prova.kuyruk.length) {
     return `<div class="bos"><span class="g">✅</span><p><strong>Prova tamam.</strong></p>
-      <p class="soluk">${b} imge gözden geçirildi.</p></div>
+      <p class="soluk">${prova.bitti} imge gözden geçirildi.</p></div>
       <button class="birincil tam" data-eylem="prova-bitir">Bitir</button>`;
   }
 
@@ -625,12 +628,17 @@ function gorProva() {
 }
 
 function notVer(grade) {
-  if (!prova?.kuyruk.length) return;
+  if (!prova?.kuyruk.length || prova.tamamlandi) return;
   const ref = prova.kuyruk.shift();
-  const im = S.durak(ref.s, ref.d)?.imgeler.find((x) => x.id === ref.i);
-  if (im) S.imgeGuncelle(ref.s, ref.d, ref.i, { srs: planla(im.srs, grade) });
+
+  // Kuyruk durumu store'a dokunmadan ÖNCE tutarlı hale getirilir: imgeGuncelle
+  // abonelere senkron haber verip ciz() çağırıyor, o çizim tutarlı durumu görmeli.
   if (grade === GRADE.AGAIN) prova.kuyruk.push(ref); else prova.bitti += 1;
   prova.acik = false;
+  if (!prova.kuyruk.length) prova.tamamlandi = true;
+
+  const im = S.durak(ref.s, ref.d)?.imgeler.find((x) => x.id === ref.i);
+  if (im) S.imgeGuncelle(ref.s, ref.d, ref.i, { srs: planla(im.srs, grade) });
   ciz();
 }
 
@@ -661,7 +669,8 @@ function gorRapor() {
         <div style="font-size:1.4rem;color:var(--soluk)">→</div>
         <div><div class="buyuk-skor" style="font-size:2rem;color:${sonT ? 'var(--yesil)' : 'var(--soluk)'}">${sonT ? sonT.dogru : '—'}</div><span class="soluk">son test</span></div>
       </div>
-      ${sonT ? `<p style="text-align:center;margin-top:8px">15 terimden <strong>${sonT.dogru - onT.dogru >= 0 ? '+' : ''}${sonT.dogru - onT.dogru}</strong> terim kazanç</p>` : ''}
+      ${sonT ? `<p style="text-align:center;margin-top:8px">Fark: <strong>${sonT.dogru - onT.dogru >= 0 ? '+' : ''}${sonT.dogru - onT.dogru}</strong> terim</p>
+      <p class="soluk" style="text-align:center">Listeler farklı ve güçlükleri eşitlenmiş değil.</p>` : ''}
     </div>` : `<p class="soluk">Ön test henüz yapılmadı (1. ders).</p>`}
 
     <h2>Rota testleri</h2>
@@ -689,7 +698,8 @@ function gorRapor() {
     }).join('') : `<p class="soluk">Saray yok.</p>`}
 
     ${ist.toplam ? `<h2>En zayıf imgeler</h2>
-    <p class="soluk">Burada takılıyorsan imge kötü kurulmuş. Tekrar etmek yerine yeniden kur.</p>
+    <p class="soluk">Provalarda ısrarla gelmeyen imgeler. Birkaç provaya bakıp karar ver:
+    tekrarı sürdürmek mi, imgeyi yeniden kurmak mı?</p>
     ${zayif.length ? zayif.map((z) => `<div class="kart tiklanir" data-eylem="durak-ac" data-saray="${z.saray.id}" data-durak="${z.durak.id}">
       <div class="kart-baslik"><strong>${kacis(z.imge.terim)}</strong>
         <span class="etiket zayif">%${Math.round(z.skor * 100)} zayıf</span></div>

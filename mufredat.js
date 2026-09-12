@@ -53,15 +53,21 @@ export const DERSLER = [
         Bu yüzden işe bir ölçümle başlıyoruz.</p>
         <p>Şimdi sana 15 akademik terim göstereceğim. Hiçbir teknik kullanmadan,
         bildiğin gibi ezberleyeceksin. Sonra hatırladıklarını yazacaksın.</p>
-        <p><strong>Düşük skor almak iyidir.</strong> Kursun sonunda aynı formatta ikinci bir test var;
-        aradaki fark senin kazancın. Şimdi iyi bir skor almaya çalışmak sadece kendini kandırmak olur.</p>` },
+        <p><strong>Bildiğin yöntemle elinden geleni yap.</strong> Bu bir geçme sınavı değil,
+        başlangıç kaydın. Kursun sonunda benzer formatta ikinci bir test var; aradaki fark
+        sana kaba bir gidiş göstergesi verir.</p>
+        <p class="soluk">Not: iki testin kelime listeleri farklıdır ve güçlükleri birbirine
+        eşitlenmiş değildir. Bu yüzden aradaki fark, kursun etkisinin ölçümü değil;
+        yalnızca kendi kaydın.</p>` },
       { id: 'a2', tip: 'drill', drill: 'on-test', baslik: 'Ön test: 15 terim', gecmeNotu: 0,
         metin: '<p>Tekniksiz, ham ezber. 90 saniye çalışma süresi var.</p>' },
-      { id: 'a3', tip: 'anlat', baslik: 'Bu skor normal', metin: `
-        <p>Çoğu insan tekniksiz 15 terimden <strong>5-8</strong> tanesini hatırlar; genelde listenin
-        başındakiler ve sonundakiler akılda kalır, ortası buharlaşır.</p>
-        <p>Bunun nedeni kelime listesinin hafızanın hiçbir güçlü kancasına takılmaması.
-        Sıradaki derste hangi kancayı kullanacağımızı göreceksin.</p>` },
+      { id: 'a3', tip: 'anlat', baslik: 'Skorunu nasıl okumalı', metin: `
+        <p>Bu sayı bir yetenek ölçüsü değil. Tekniksiz serbest hatırlamada skorlar kişiden kişiye
+        ve listeden listeye geniş biçimde değişir; uykudan dikkate kadar çok şey etkiler.</p>
+        <p>Buna karşın çoğu kişinin fark ettiği bir örüntü vardır: <strong>listenin başı ve sonu
+        ortasından daha iyi hatırlanır</strong>. Kendi cevabına bak, sende de böyle mi?</p>
+        <p>Bağlantısız bir kelime listesinde tutunacak pek bir şey yoktur. Sıradaki derste
+        neye tutunacağımızı göreceksin.</p>` },
     ],
   },
 
@@ -85,9 +91,10 @@ export const DERSLER = [
         <p><strong>3. İmge</strong> — durağa bıraktığın çarpıcı sahne. Hatırlanacak şeyin kılık değiştirmiş hali.</p>
         <p><strong>4. Rota</strong> — durakların sırası. Hatırlama rotayı yürümekle olur; bu yüzden
         sıra rastgele olamaz.</p>
-        <p>Dikkat: imgeyi <strong>sen</strong> kuracaksın. Bu uygulama sana imge vermez —
-        başkasının imgesi senin kendi kurduğunun yarısı kadar tutar, çünkü imgeyi kurma çabası
-        hafıza izini oluşturan şeyin kendisidir.</p>` },
+        <p>Dikkat: imgeyi <strong>sen</strong> kuracaksın. Bu uygulama sana hazır imge vermez,
+        çünkü imgeyi kurma çabası pratiğin kendisidir: kendi çağrışımlarını aramak,
+        hazır bir tasviri okumaktan daha çok zihinsel iş gerektirir. Kendi kurduğun imgeler
+        sana daha anlamlı gelecek; bu yüzden kendi versiyonunu yazmanı isteyeceğim.</p>` },
       { id: 'a3', tip: 'soru', baslik: 'Kontrol', soru: 'Hafıza sarayı yöntemi temel olarak neye dayanır?',
         secenekler: [
           { m: 'Kelimeleri çok sayıda tekrar ederek pekiştirmeye', d: false,
@@ -103,8 +110,8 @@ export const DERSLER = [
         secenekler: [
           { m: 'Çünkü imge üretmek teknik olarak zor', d: false,
             aciklama: 'Teknik bir kısıt değil, pedagojik bir tercih.' },
-          { m: 'Çünkü imgeyi kurma çabası hafıza izini oluşturan şeyin kendisi', d: true,
-            aciklama: 'Doğru. Hazır imgeyi okumak pasif; kendi imgeni kurmak kodlamanın ta kendisi.' },
+          { m: 'Çünkü imgeyi kurmak için harcanan çaba pratiğin kendisi', d: true,
+            aciklama: 'Doğru. Hazır bir tasviri okumak pasif kalır; kendi çağrışımını aramak daha fazla zihinsel iş gerektirir ve imge sana daha anlamlı gelir.' },
           { m: 'Çünkü herkesin sarayı farklı', d: false,
             aciklama: 'Bu da doğru ama asıl sebep değil — imge evrensel olsa bile kendi kurduğun daha iyi tutar.' },
         ] },
@@ -328,21 +335,38 @@ export const DERSLER = [
         • <strong>İmge tasviri</strong>ne sahneyi yaz — durakla nasıl etkileştiğini belirt,<br>
         • <strong>Duyu notu</strong>na en az bir ses/koku/doku ekle.</p>
         <p>Bir durağa bir imge; şimdilik kalabalık yapma.</p>`,
+        // Denetim yalnızca ölçülebilir olanı doğrular: sayı, rotaya dağılım ve zorunlu alanlar.
+        // İmgenin çarpıcılığı gibi anlam kalitesi koddan anlaşılamaz; o sıradaki öz-denetimde.
         kontrol: (S) => {
           const s = ilkSaray(S);
           if (!s) return { tamam: false, mesaj: 'Önce sarayını kur.' };
           const imgeler = S.tumImgeler(s.id);
           if (imgeler.length < 5) return { tamam: false, mesaj: `${imgeler.length}/5 imge var. ${5 - imgeler.length} tane daha yerleştir.` };
+
+          const duraklar = new Set(imgeler.map((x) => x.durak.id));
+          if (duraklar.size < 5) {
+            return { tamam: false, mesaj: `${imgeler.length} imge var ama yalnızca ${duraklar.size} durağa yerleşmiş. Bu ödevde her imge ayrı bir durağa gitmeli: ${5 - duraklar.size} imgeyi başka duraklara taşı.` };
+          }
+          const eksikAlan = imgeler.filter((x) => !(x.imge.terim || '').trim() || !(x.imge.icerik || '').trim());
+          if (eksikAlan.length) {
+            return { tamam: false, mesaj: `${eksikAlan.length} imgede terim ya da içerik alanı boş. Hatırlayacağın şeyi de yazman gerekiyor.` };
+          }
           const tasvirsiz = imgeler.filter((x) => (x.imge.tasvir || '').trim().length < 40);
           if (tasvirsiz.length) {
-            return { tamam: false, mesaj: `${imgeler.length} imge var ama ${tasvirsiz.length} tanesinin tasviri yok ya da çok kısa (ilki: "${tasvirsiz[0].imge.terim}"). Sahneyi anlat, etiket yazma.` };
+            return { tamam: false, mesaj: `${tasvirsiz.length} imgenin tasviri yok ya da çok kısa (ilki: "${tasvirsiz[0].imge.terim}"). Sahneyi anlat, etiket yazma.` };
           }
-          const duyusuz = imgeler.filter((x) => !(x.imge.duyu || '').trim());
-          if (duyusuz.length > imgeler.length - 3) {
-            return { tamam: false, mesaj: `Tasvirler iyi ama duyu notu neredeyse hiç yok. En az 3 imgeye ses/koku/doku ekle.` };
+          const duyulu = imgeler.filter((x) => (x.imge.duyu || '').trim()).length;
+          if (duyulu < 3) {
+            return { tamam: false, mesaj: `Tasvirler dolu ama duyu notu olan imge sayısı ${duyulu}/3. En az 3 imgeye ses, koku ya da doku ekle.` };
           }
-          return { tamam: true, mesaj: `${imgeler.length} imge, tasvirleri dolu. İlk yerleştirmen tamam.` };
+          return { tamam: true, mesaj: `${imgeler.length} imge, ${duraklar.size} ayrı durakta; alanlar dolu.` };
         } },
+      { id: 'a5', tip: 'rubrik', baslik: 'Yerleştirdiklerini denetle', maddeler: [
+        'Her sahne durağın üstünde, içinde ya da onunla çarpışarak oluyor; yanında durmuyor.',
+        'Durağın adını söylediğimde sahne kendiliğinden geliyor.',
+        'Hiçbirinde terimin yazılı hali (tabela, kağıt) yok.',
+        'Sahnelerde hareket var; durağan resim değil.',
+      ] },
     ],
   },
 
@@ -433,6 +457,8 @@ export const DERSLER = [
         metin: `<p>Sarayına, en az biri <strong>tanım</strong> ve en az biri <strong>sıralı süreç</strong>
         olacak şekilde imge eklemeye devam et — toplam <strong>10 imge</strong>.
         Süreci yerleştirirken adımları ardışık duraklara dağıt.</p>`,
+        // Yine yalnızca ölçülebilir kısım: sayı, dağılım, dolu alanlar.
+        // "Biri tanım, biri sıralı süreç olsun" koşulu metinden anlaşılamaz; öz-denetimde sorulur.
         kontrol: (S) => {
           const s = ilkSaray(S);
           if (!s) return { tamam: false, mesaj: 'Önce sarayını kur.' };
@@ -440,10 +466,23 @@ export const DERSLER = [
           if (imgeler.length < 10) return { tamam: false, mesaj: `${imgeler.length}/10 imge. ${10 - imgeler.length} tane daha ekle.` };
           const kullanilan = new Set(imgeler.map((x) => x.durak.id));
           if (kullanilan.size < 6) {
-            return { tamam: false, mesaj: `10 imge var ama sadece ${kullanilan.size} durağa dağılmış. İmgeleri rotaya yay — bir durağa yığmak hatırlamayı bozar.` };
+            return { tamam: false, mesaj: `${imgeler.length} imge var ama sadece ${kullanilan.size} durağa dağılmış. İmgeleri rotaya yay; bir durağa yığmak sırayı karıştırır.` };
           }
-          return { tamam: true, mesaj: `${imgeler.length} imge, ${kullanilan.size} durağa dağılmış.` };
+          const eksikAlan = imgeler.filter((x) => !(x.imge.terim || '').trim() || !(x.imge.icerik || '').trim());
+          if (eksikAlan.length) {
+            return { tamam: false, mesaj: `${eksikAlan.length} imgede terim ya da içerik alanı boş.` };
+          }
+          const tasvirsiz = imgeler.filter((x) => (x.imge.tasvir || '').trim().length < 25);
+          if (tasvirsiz.length) {
+            return { tamam: false, mesaj: `${tasvirsiz.length} imgenin tasviri boş ya da çok kısa. Sahneyi yazmadan imge yerleşmiş sayılmaz.` };
+          }
+          return { tamam: true, mesaj: `${imgeler.length} imge, ${kullanilan.size} durakta; alanlar dolu.` };
         } },
+      { id: 'a6', tip: 'rubrik', baslik: 'İçerik türlerini denetle', maddeler: [
+        'Yerleştirdiklerim arasında en az bir tanım var ve onu 3-4 çıpaya indirdim.',
+        'En az bir sıralı süreç var ve adımlarını ardışık duraklara dağıttım.',
+        'Sıralı süreçte durak numarası ile adım numarası birbirine karşılık geliyor.',
+      ] },
     ],
   },
 
@@ -457,24 +496,27 @@ export const DERSLER = [
         <p>Hatırlarken içeriği <em>aramazsın</em>, rotayı yürürsün. Sıra şöyle:
         durağa gel → sahneyi gör → sahneden içeriği çöz. Üç adımı atlamaya çalışmak
         (doğrudan içeriği hatırlamaya çalışmak) yöntemi iptal eder.</p>
-        <p>Sahne gelmiyorsa durakta <strong>bekle</strong>. Genelde 2-3 saniyede gelir.
-        Gelmezse o imge zayıftır — daha çok tekrar değil, <strong>yeni imge</strong> gerekir.</p>
+        <p>Sahne gelmiyorsa durakta <strong>bekle</strong>; hatırlamaya çalışmanın kendisi
+        tekrarın işe yarayan kısmı. Bir süre sonra hâlâ gelmiyorsa cevaba bak ve
+        iki seçeneği birlikte düşün: bu imge daha fazla tekrara mı ihtiyaç duyuyor,
+        yoksa yeniden kurulması mı gerekiyor? İkisi de meşru; karar sende.</p>
         <p>Üç prova biçimini dönüşümlü kullan: <strong>ileri</strong> (temel),
         <strong>tersten</strong> (sıraya bağımlılığı kırar), <strong>rastgele</strong>
         (sınavda soru sırası senin rotana uymaz, buna hazırlanman gerekir).</p>` },
-      { id: 'a2', tip: 'soru', baslik: 'Kontrol', soru: 'Bir durakta sahne 10 saniyedir gelmiyor. Ne yapmalısın?',
+      { id: 'a2', tip: 'soru', baslik: 'Kontrol', soru: 'Bir durakta sahne bir süre beklemene rağmen gelmiyor. Sıradaki adım ne olmalı?',
         secenekler: [
-          { m: 'İmgeyi yeniden kurmak: demek ki yeterince çarpıcı değil', d: true,
-            aciklama: 'Doğru. Gelmeyen sahne bir kodlama hatasıdır; tekrar sayısını artırmak kötü imgeyi kurtarmaz.' },
-          { m: 'O imgeyi her gün 10 kez tekrar etmek', d: false,
-            aciklama: 'Zayıf imgeyi tekrarlamak pahalı ve verimsiz. Önce imgeyi düzelt, sonra tekrar et.' },
+          { m: 'Cevaba bakıp kontrol etmek, sonra bu imgenin tekrara mı güçlendirmeye mi ihtiyacı olduğuna karar vermek', d: true,
+            aciklama: 'Doğru. Hatırlamayı denedin; şimdi kontrol adımı geliyor. Aynı imge birkaç provada üst üste gelmiyorsa onu yeniden kurmak mantıklı, ama tek bir başarısız denemeden imgenin kötü olduğu sonucu çıkmaz.' },
+          { m: 'Hemen imgeyi silip sıfırdan yeni bir imge kurmak', d: false,
+            aciklama: 'Aceleci olur. Tek bir gelmeyen hatırlama, unutmanın normal seyri de olabilir; karar vermek için birkaç provaya bakmak gerekir.' },
           { m: 'Durağı atlayıp devam etmek', d: false,
-            aciklama: 'Atlamak sorunu büyütür; o durak kalıcı bir boşluk olur.' },
+            aciklama: 'Cevabı kontrol etmeden geçmek o durağı boşlukta bırakır; en azından bakıp üzerinden geçmek gerekir.' },
         ] },
       { id: 'a3', tip: 'uygula', baslik: 'Bir prova seansı tamamla', hedef: 'prova',
         metin: `<p>Prova sekmesine git ve sarayında <strong>rota provası</strong> yap —
-        en az 8 imgeye not ver. Cevabı görmeden önce sahneyi gerçekten hatırlamaya çalış;
-        kendini kandırmak sadece programın sana yanlış aralık vermesine yol açar.</p>`,
+        en az 8 imgeye not ver. Cevabı açmadan önce sahneyi gerçekten hatırlamaya çalış,
+        sonra notu dürüst ver: zorlandığın bir imgeye "Kolay" demek programın o imgeyi
+        uzun süre sana göstermemesine yol açar.</p>`,
         kontrol: (S) => {
           const esik = Date.now() - 86400000;
           const bugunNot = S.tumImgeler().filter((x) => (x.imge.srs.gecmis || []).some((g) => g.t > esik));
@@ -499,26 +541,32 @@ export const DERSLER = [
         <p>Hafıza sarayı kodlamayı muazzam kolaylaştırır ama <strong>unutmayı iptal etmez</strong>.
         İyi kurulmuş bir imge günler içinde solar; farkı şu ki solmuş bir imge
         bir bakışta geri gelir — yeniden öğrenmen gerekmez.</p>
-        <p>Kritik pencere <strong>ilk 24 saat</strong>. Yerleştirdiğin günün akşamı bir kez
-        rotayı yürümek, o imgelerin ömrünü kat kat artırır.</p>
-        <p>Sonrası aralıklı tekrar: 1 gün → 3 gün → 1 hafta → 2 hafta → 1 ay.
-        Atölyedeki prova bu aralıkları senin verdiğin notlara göre kendisi hesaplar;
-        "Hatırlamadım" dersen aralık sıfırlanır, "Kolay" dersen uzar.</p>
+        <p>Tekrarın iki önemli özelliği var. Birincisi, tekrar <strong>hatırlamaya çalışmakla</strong>
+        yapılmalı: önce durağa git ve sahneyi kendin getirmeyi dene, sonra cevabı kontrol et.
+        Pasif okuma (imgeyi yeniden okumak) çok daha zayıf bir tekrar biçimi.</p>
+        <p>İkincisi, tekrarlar <strong>araya zaman koyularak</strong> yapıldığında üst üste
+        yapılmaktan daha iyi sonuç verir. Uygun aralık tek bir sayı değildir:
+        bilgiyi ne kadar süre korumak istediğine göre değişir. Yarın sınava gireceksen
+        kısa aralıklar, aylar sonrası için uzun aralıklar uygundur.</p>
+        <p>Atölyedeki prova bu aralıkları senin verdiğin notlara göre hesaplar;
+        "Hatırlamadım" dersen aralık kısalır, "Kolay" dersen uzar. İstediğin zaman
+        programın dışında da prova yapabilirsin.</p>
         <p><strong>Dürüst not ver.</strong> Zorlandığın halde "Kolay" demek, programın o imgeyi
         bir ay boyunca sana göstermemesine yol açar.</p>` },
-      { id: 'a2', tip: 'soru', baslik: 'Kontrol', soru: 'Yeni yerleştirdiğin 10 imge için en değerli tek tekrar ne zaman?',
+      { id: 'a2', tip: 'soru', baslik: 'Kontrol', soru: 'Tekrar yapacaksın. Hangisi daha iyi bir tekrar biçimi?',
         secenekler: [
-          { m: 'Aynı gün, akşam', d: true,
-            aciklama: 'Doğru. En hızlı kayıp ilk 24 saatte olur; o penceredeki tek tekrar en yüksek getirili olandır.' },
-          { m: 'Bir hafta sonra, iz soğuyunca', d: false,
-            aciklama: 'Bir hafta çoğu imge için fazla uzun; geri kazanım maliyeti artar.' },
-          { m: 'Hemen, yerleştirdikten iki dakika sonra', d: false,
-            aciklama: 'İki dakika sonra hâlâ çalışma belleğinde; bu tekrar sana sahte bir başarı hissi verir, kalıcılığa katkısı düşük.' },
+          { m: 'İmgeleri ve içerikleri baştan sona okuyup gözden geçirmek', d: false,
+            aciklama: 'Tanıdık gelir ve kolay hissettirir, ama hatırlamayı denemeden yapılan gözden geçirme genelde daha zayıf bir tekrar biçimidir.' },
+          { m: 'Durakta sahneyi kendin getirmeyi denemek, sonra cevabı kontrol etmek', d: true,
+            aciklama: 'Doğru. Hatırlamaya çalışmak tekrarın etkili kısmı; kontrol adımı da yanlış hatırladığın yerleri yakalar. Tekrarları araya zaman koyarak dağıtmak ayrıca yardımcı olur.' },
+          { m: 'Tüm rotayı aynı oturumda üst üste beş kez yürümek', d: false,
+            aciklama: 'Aynı oturumdaki yoğun yığma, aynı sayıda tekrarı günlere dağıtmaktan genellikle daha az işe yarar.' },
         ] },
       { id: 'a3', tip: 'rubrik', baslik: 'Tekrar alışkanlığı', maddeler: [
-        'Yeni imge yerleştirdiğim günün akşamı rotayı bir kez yürüyeceğim.',
+        'Tekrarda önce hatırlamayı deneyip sonra cevabı kontrol edeceğim.',
+        'Tekrarları aynı oturuma yığmak yerine günlere dağıtacağım.',
         'Prova notlarını dürüst vereceğim; zorlandığımda "Zor" diyeceğim.',
-        'Sahne gelmiyorsa tekrar etmek yerine imgeyi yeniden kuracağım.',
+        'Bir imge tekrar tekrar gelmiyorsa onu güçlendirmeyi de deneyeceğim.',
       ] },
     ],
   },
@@ -553,8 +601,12 @@ export const DERSLER = [
           return { tamam: true, mesaj: `${uygun.length} saray hazır durumda. Stokun başladı.` };
         } },
       { id: 'a3', tip: 'anlat', baslik: 'Son ölçüm', metin: `
-        <p>Sıra kursun başındaki testin eşine geldi: 15 akademik terim, aynı format, aynı süre.
-        Tek fark, bu kez bir sarayın ve bir yöntemin var.</p>
+        <p>Sıra kursun başındaki testin benzerine geldi: 15 akademik terim, aynı format, aynı süre.
+        Fark, bu kez bir sarayın ve bir yöntemin olması.</p>
+        <p class="soluk">Kelime listesi farklı ve güçlükleri eşitlenmiş değil; ayrıca arada
+        geçen zamanda başka şeyler de değişti. Yani çıkan fark kontrollü bir deney sonucu değil,
+        kendi kaydın. Yöntemin kalıcı hatırlamaya katkısını gösteren araştırmalar var;
+        buradaki tek ölçüm onların yerine geçmez.</p>
         <p>Çalışma süresinde terimleri bir saraya yerleştir. Hangi sarayı kullanacağına önce karar ver —
         süre başlayınca mekan seçmekle uğraşmak istemezsin.</p>` },
       { id: 'a4', tip: 'drill', drill: 'son-test', baslik: 'Son test: 15 terim', gecmeNotu: 0,
@@ -564,8 +616,9 @@ export const DERSLER = [
         <p>Bundan sonrası alışkanlık: yeni konu geldiğinde stoktan bir saray seç,
         anahtar kelimeye indir, durak başına bir madde yerleştir, aynı akşam bir kez yürü,
         sonra provanın gösterdiği günlerde tekrar et.</p>
-        <p>Takıldığın yeri Rapor ekranı söyler: sağlamlığı düşük imgeler kötü kurulmuş imgelerdir.
-        Onları tekrar etmek yerine <strong>yeniden kur</strong>.</p>` },
+        <p>Takıldığın yerleri Rapor ekranı listeler. Bir imge provalarda tekrar tekrar gelmiyorsa
+        iki seçenek var: tekrarı sürdürmek ya da imgeyi yeniden kurmak. Birkaç provaya bakıp
+        karar ver; ısrarla gelmeyenler için yeniden kurmak genelde daha verimli.</p>` },
     ],
   },
 ];
